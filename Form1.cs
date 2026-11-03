@@ -47,6 +47,15 @@ namespace Projeto_4_bim
             pictureBox4.Image = binaria;
         }
 
+        // Botao simples que aplica a primitiva de rotacao a uma das imagens.
+        public void btnRotacionar_Click(object sender, EventArgs e)
+        {
+            Bitmap cinza = new Bitmap(@"c:\Imagens\E_cinza.jpg");
+            Bitmap rotacionada = Rotacionar(cinza);
+            rotacionada.Save(@"c:\Imagens\E_cinza_rotacionada.jpg");
+            pictureBox4.Image = rotacionada;
+        }
+
         // EVIDENCIA (RA7 p.16): cor = Color.FromArgb(r, g, b);
         public static Color IniciaCor(int r, int g, int b)
         {

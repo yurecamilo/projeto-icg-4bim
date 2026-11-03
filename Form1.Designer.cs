@@ -8,6 +8,7 @@
         private System.ComponentModel.IContainer components = null;
 
         private Button btnProcessar;
+        private Button btnRotacionar;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private PictureBox pictureBox3;
@@ -35,6 +36,7 @@
         private void InitializeComponent()
         {
             btnProcessar = new Button();
+            btnRotacionar = new Button();
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             pictureBox3 = new PictureBox();
@@ -54,6 +56,16 @@
             btnProcessar.Text = "Processar (A+B+C+D=E)";
             btnProcessar.UseVisualStyleBackColor = true;
             btnProcessar.Click += btnProcessar_Click;
+            // 
+            // btnRotacionar
+            // 
+            btnRotacionar.Location = new Point(250, 12);
+            btnRotacionar.Name = "btnRotacionar";
+            btnRotacionar.Size = new Size(140, 45);
+            btnRotacionar.TabIndex = 5;
+            btnRotacionar.Text = "Rotacionar";
+            btnRotacionar.UseVisualStyleBackColor = true;
+            btnRotacionar.Click += btnRotacionar_Click;
             // 
             // pictureBox1
             // 
@@ -103,6 +115,7 @@
             Controls.Add(pictureBox3);
             Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
+            Controls.Add(btnRotacionar);
             Controls.Add(btnProcessar);
             Name = "Form1";
             Text = "Projeto 4 BIM - Processamento de Imagens";
