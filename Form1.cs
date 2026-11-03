@@ -47,12 +47,14 @@ namespace Projeto_4_bim
             pictureBox4.Image = binaria;
         }
 
-        // Botao simples que aplica a primitiva de rotacao a uma das imagens.
+        // Botao simples que aplica a primitiva de rotacao a imagem atual do pictureBox4.
+        // Cada clique rotaciona mais 90° (transposicao de matriz do slide RA6 p.20).
         public void btnRotacionar_Click(object sender, EventArgs e)
         {
-            Bitmap cinza = new Bitmap(@"c:\Imagens\E_cinza.jpg");
-            Bitmap rotacionada = Rotacionar(cinza);
-            rotacionada.Save(@"c:\Imagens\E_cinza_rotacionada.jpg");
+            if (pictureBox4.Image == null) return;
+            Bitmap atual = new Bitmap(pictureBox4.Image);
+            Bitmap rotacionada = Rotacionar(atual);
+            rotacionada.Save(@"c:\Imagens\E_rotacionada.jpg");
             pictureBox4.Image = rotacionada;
         }
 
