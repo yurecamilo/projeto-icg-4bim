@@ -11,8 +11,6 @@ namespace Projeto_4_bim
         string caminhoAviao = @"c:\Imagens\Aviao2.jpg";
 
         // Caminhos das imagens de saida
-        string caminhoProcessadaHomem = @"c:\Imagens\ProcessadaHomem.jpg";
-        string caminhoProcessadaHomemBalao = @"c:\Imagens\ProcessadaHomemBalao.jpg";
         string caminhoProcessada = @"c:\Imagens\Processada.jpg";
         string caminhoProcessadaBrilho = @"c:\Imagens\ProcessadaBrilho.jpg";
         string caminhoProcessadaBinaria = @"c:\Imagens\ProcessadaBinaria.jpg";
@@ -41,26 +39,22 @@ namespace Projeto_4_bim
             Bitmap balao = new Bitmap(caminhoBalao);
             Bitmap aviao = new Bitmap(caminhoAviao);
 
-            // Cola gradualmente, salvando cada juncao intermediaria
+            // Cola todos os objetos na MESMA paisagem, gerando uma imagem so com tudo
             ColarImagem(paisagem, homem, 300, 500, limiarHomem);
-            paisagem.Save(caminhoProcessadaHomem);
+            ColarImagem(paisagem, balao, 500, 0, limiarBalao);
+            ColarImagem(paisagem, aviao, 200, 0, limiarAviao);
 
-            Bitmap comHomem = new Bitmap(paisagem);
-            ColarImagem(comHomem, balao, 500, 0, limiarBalao);
-            comHomem.Save(caminhoProcessadaHomemBalao);
-
-            Bitmap comHomemBalao = new Bitmap(comHomem);
-            ColarImagem(comHomemBalao, aviao, 200, 0, limiarAviao);
-            comHomemBalao.Save(caminhoProcessada);
+            // Salva a imagem processada final (item k: A+B+C+D=E)
+            paisagem.Save(caminhoProcessada);
 
             // Aplica as primitivas e salva cada saida
-            Bitmap imagemCinza = ImgGrayLevel(comHomemBalao);
+            Bitmap imagemCinza = ImgGrayLevel(paisagem);
             imagemCinza.Save(caminhoProcessadaCinza);                 // item (i)
 
             Bitmap imagemBinaria = Threshold(imagemCinza, 126);
             imagemBinaria.Save(caminhoProcessadaBinaria);             // item (j): T = 126
 
-            Bitmap imagemBrilho = Iluminar(comHomemBalao, 85, 85, 85);
+            Bitmap imagemBrilho = Iluminar(paisagem, 85, 85, 85);
             imagemBrilho.Save(caminhoProcessadaBrilho);               // item (h): brilho 85
 
             Bitmap imagemRotacionada = TransporImagem(imagemCinza);
