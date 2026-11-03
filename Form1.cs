@@ -13,53 +13,51 @@ namespace Projeto_4_bim
         public void btnProcessar_Click(object sender, EventArgs e)
         {
             // EVIDENCIA (RA7 p.14): Bitmap img = new Bitmap("caminho")
-            Bitmap a = new Bitmap(@"c:\Imagens\Im.jpg");
+            Bitmap paisagem = new Bitmap(@"c:\Imagens\Im.jpg");
 
-            // Enunciado item (a): filtro nas intensidades do fundo de B, C e D.
-            // A cor do fundo e obtida de GetPixel(0,0), como no codigo do colega.
-            Bitmap b = FiltrarFundo(new Bitmap(@"c:\Imagens\Aviao2.jpg"));
-            Bitmap c = FiltrarFundo(new Bitmap(@"c:\Imagens\Balao.jpg"));
-            Bitmap d = FiltrarFundo(new Bitmap(@"c:\Imagens\homem.jpg"));
+            // Enunciado item (a): remove o fundo de B, C e D usando a cor do pixel (0,0).
+            Bitmap aviao = RemoverFundo(new Bitmap(@"c:\Imagens\Aviao2.jpg"));
+            Bitmap balao = RemoverFundo(new Bitmap(@"c:\Imagens\Balao.jpg"));
+            Bitmap homem = RemoverFundo(new Bitmap(@"c:\Imagens\homem.jpg"));
 
-            // Posicoes conforme o codigo do colega (aviao 200,0; balao 500,0; homem 300,500).
-            // Tamanho original de cada imagem (sem escala).
-            b = SobreCamada(b, a.Width, a.Height, 200, 0);
-            c = SobreCamada(c, a.Width, a.Height, 500, 0);
-            d = SobreCamada(d, a.Width, a.Height, 300, 500);
+            // Cola cada objeto na cena final, nas posicoes do codigo do colega.
+            aviao = ColarImagem(aviao, paisagem.Width, paisagem.Height, 200, 0);
+            balao = ColarImagem(balao, paisagem.Width, paisagem.Height, 500, 0);
+            homem = ColarImagem(homem, paisagem.Width, paisagem.Height, 300, 500);
 
             // Enunciado itens 1 e (k): A + B + C + D = E numa unica funcao.
-            Bitmap E = JuntarImagens(a, b, c, d);
+            Bitmap cenaFinal = UnirImagens(paisagem, aviao, balao, homem);
 
             // Enunciado itens (m), (e) e (o): quatro saidas .jpg em c:\Imagens.
-            E.Save(@"c:\Imagens\E_original.jpg");
-            Bitmap brilho = Iluminar(E, 85);     // item (h): brilho 85
-            brilho.Save(@"c:\Imagens\E_brilho85.jpg");
-            Bitmap cinza = ImgGrayLevel(E);       // item (i)
-            cinza.Save(@"c:\Imagens\E_cinza.jpg");
-            Bitmap binaria = Threshold(cinza, 126); // item (j): T = 126
-            binaria.Save(@"c:\Imagens\E_binaria.jpg");
-            Rotacionar(cinza).Save(@"c:\Imagens\E_cinza_rotacionada.jpg"); // item (n)
+            cenaFinal.Save(@"c:\Imagens\E_original.jpg");
+            Bitmap imagemBrilho = Iluminar(cenaFinal, 85);     // item (h): brilho 85
+            imagemBrilho.Save(@"c:\Imagens\E_brilho85.jpg");
+            Bitmap imagemCinza = ImgGrayLevel(cenaFinal);       // item (i)
+            imagemCinza.Save(@"c:\Imagens\E_cinza.jpg");
+            Bitmap imagemBinaria = Threshold(imagemCinza, 126); // item (j): T = 126
+            imagemBinaria.Save(@"c:\Imagens\E_binaria.jpg");
+            Rotacionar(imagemCinza).Save(@"c:\Imagens\E_cinza_rotacionada.jpg"); // item (n)
 
             // Mostra as 4 imagens principais na tela (item g: opcional, mas agora ativo).
-            pictureBox1.Image = E;
-            pictureBox2.Image = brilho;
-            pictureBox3.Image = cinza;
-            pictureBox4.Image = binaria;
+            picOriginal.Image = cenaFinal;
+            picBrilho.Image = imagemBrilho;
+            picCinza.Image = imagemCinza;
+            picRotacao.Image = imagemBinaria;
         }
 
-        // Botao simples que aplica a primitiva de rotacao a imagem atual do pictureBox4.
+        // Botao simples que aplica a primitiva de rotacao a imagem atual do picRotacao.
         // Cada clique rotaciona mais 90° (transposicao de matriz do slide RA6 p.20).
         public void btnRotacionar_Click(object sender, EventArgs e)
         {
-            if (pictureBox4.Image == null) return;
-            Bitmap atual = new Bitmap(pictureBox4.Image);
-            Bitmap rotacionada = Rotacionar(atual);
-            rotacionada.Save(@"c:\Imagens\E_rotacionada.jpg");
-            pictureBox4.Image = rotacionada;
+            if (picRotacao.Image == null) return;
+            Bitmap imagemAtual = new Bitmap(picRotacao.Image);
+            Bitmap imagemRotacionada = Rotacionar(imagemAtual);
+            imagemRotacionada.Save(@"c:\Imagens\E_rotacionada.jpg");
+            picRotacao.Image = imagemRotacionada;
         }
 
         // EVIDENCIA (RA7 p.16): cor = Color.FromArgb(r, g, b);
-        public static Color IniciaCor(int r, int g, int b)
+        public static Color CriarCor(int r, int g, int b)
         {
             return Color.FromArgb(r, g, b);
         }
@@ -67,7 +65,7 @@ namespace Projeto_4_bim
         // I'(x,y) = I(x,y) + deltaB com clamp min(max(v,0),255) (RA7 p.27 e p.29).
         public static Bitmap Iluminar(Bitmap img, int deltaB)
         {
-            Bitmap imgnova = new Bitmap(img.Width, img.Height);
+            Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
@@ -75,19 +73,19 @@ namespace Projeto_4_bim
                     int r = img.GetPixel(i, j).R;
                     int g = img.GetPixel(i, j).G;
                     int b = img.GetPixel(i, j).B;
-                    imgnova.SetPixel(i, j, IniciaCor(
+                    imagemNova.SetPixel(i, j, CriarCor(
                         Math.Max(0, Math.Min(255, r + deltaB)),
                         Math.Max(0, Math.Min(255, g + deltaB)),
                         Math.Max(0, Math.Min(255, b + deltaB))));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
         // g = (r*0.30) + (g*0.59) + (b*0.11) (RA7 p.21).
         public static Bitmap ImgGrayLevel(Bitmap img)
         {
-            Bitmap imgnova = new Bitmap(img.Width, img.Height);
+            Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
@@ -95,17 +93,17 @@ namespace Projeto_4_bim
                     float r = img.GetPixel(i, j).R;
                     float g = img.GetPixel(i, j).G;
                     float b = img.GetPixel(i, j).B;
-                    int rgb = (int)(r * 0.3 + g * 0.59 + b * 0.11);
-                    imgnova.SetPixel(i, j, IniciaCor(rgb, rgb, rgb));
+                    int cinza = (int)(r * 0.3 + g * 0.59 + b * 0.11);
+                    imagemNova.SetPixel(i, j, CriarCor(cinza, cinza, cinza));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
         // Se I(i,j) <= T entao 0, senao 255 (RA7 p.23).
         public static Bitmap Threshold(Bitmap img, int t)
         {
-            Bitmap imgnova = new Bitmap(img.Width, img.Height);
+            Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
@@ -113,22 +111,22 @@ namespace Projeto_4_bim
                     float r = img.GetPixel(i, j).R;
                     float g = img.GetPixel(i, j).G;
                     float b = img.GetPixel(i, j).B;
-                    int rgb = (int)(r * 0.3 + g * 0.59 + b * 0.11);
-                    if (rgb <= t)
-                        imgnova.SetPixel(i, j, IniciaCor(0, 0, 0));
+                    int cinza = (int)(r * 0.3 + g * 0.59 + b * 0.11);
+                    if (cinza <= t)
+                        imagemNova.SetPixel(i, j, CriarCor(0, 0, 0));
                     else
-                        imgnova.SetPixel(i, j, IniciaCor(255, 255, 255));
+                        imagemNova.SetPixel(i, j, CriarCor(255, 255, 255));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
-        // Filtra o fundo: pega a cor do pixel (0,0) e apaga os pixels com a mesma
+        // Remove o fundo: pega a cor do pixel (0,0) e apaga os pixels com a mesma
         // cor (com tolerancia 30), mantendo o objeto. Mesmo if/else do slide RA7 p.18.
-        public static Bitmap FiltrarFundo(Bitmap img)
+        public static Bitmap RemoverFundo(Bitmap img)
         {
-            Color fundo = img.GetPixel(0, 0);
-            Bitmap imgnova = new Bitmap(img.Width, img.Height);
+            Color corFundo = img.GetPixel(0, 0);
+            Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
@@ -136,70 +134,70 @@ namespace Projeto_4_bim
                     int r = img.GetPixel(i, j).R;
                     int g = img.GetPixel(i, j).G;
                     int b = img.GetPixel(i, j).B;
-                    if (Math.Abs(r - fundo.R) < 30 && Math.Abs(g - fundo.G) < 30 && Math.Abs(b - fundo.B) < 30)
-                        imgnova.SetPixel(i, j, IniciaCor(0, 0, 0));
+                    if (Math.Abs(r - corFundo.R) < 30 && Math.Abs(g - corFundo.G) < 30 && Math.Abs(b - corFundo.B) < 30)
+                        imagemNova.SetPixel(i, j, CriarCor(0, 0, 0));
                     else
-                        imgnova.SetPixel(i, j, IniciaCor(r, g, b));
+                        imagemNova.SetPixel(i, j, CriarCor(r, g, b));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
-        // Juncao A + B + C + D = E numa unica funcao (item k): fundo preto (0,0,0)
+        // Uniao A + B + C + D = E numa unica funcao (item k): fundo preto (0,0,0)
         // nao contribui, objeto (cor != preta) entra na soma (RA7 p.15 e p.16).
-        public static Bitmap JuntarImagens(Bitmap a, Bitmap b, Bitmap c, Bitmap d)
+        public static Bitmap UnirImagens(Bitmap paisagem, Bitmap aviao, Bitmap balao, Bitmap homem)
         {
-            Bitmap imgnova = new Bitmap(a.Width, a.Height);
-            for (int i = 0; i <= a.Width - 1; i++)
+            Bitmap imagemNova = new Bitmap(paisagem.Width, paisagem.Height);
+            for (int i = 0; i <= paisagem.Width - 1; i++)
             {
-                for (int j = 0; j <= a.Height - 1; j++)
+                for (int j = 0; j <= paisagem.Height - 1; j++)
                 {
-                    Color cor = a.GetPixel(i, j);
-                    Color pb = b.GetPixel(i, j);
-                    if (pb.R != 0 || pb.G != 0 || pb.B != 0)
-                        cor = pb;
-                    Color pc = c.GetPixel(i, j);
-                    if (pc.R != 0 || pc.G != 0 || pc.B != 0)
-                        cor = pc;
-                    Color pd = d.GetPixel(i, j);
-                    if (pd.R != 0 || pd.G != 0 || pd.B != 0)
-                        cor = pd;
-                    imgnova.SetPixel(i, j, cor);
+                    Color corFinal = paisagem.GetPixel(i, j);
+                    Color pixelAviao = aviao.GetPixel(i, j);
+                    if (pixelAviao.R != 0 || pixelAviao.G != 0 || pixelAviao.B != 0)
+                        corFinal = pixelAviao;
+                    Color pixelBalao = balao.GetPixel(i, j);
+                    if (pixelBalao.R != 0 || pixelBalao.G != 0 || pixelBalao.B != 0)
+                        corFinal = pixelBalao;
+                    Color pixelHomem = homem.GetPixel(i, j);
+                    if (pixelHomem.R != 0 || pixelHomem.G != 0 || pixelHomem.B != 0)
+                        corFinal = pixelHomem;
+                    imagemNova.SetPixel(i, j, corFinal);
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
         // Rotacao por transposicao de matriz: I'(x,y) = I(y,x) (RA6 p.20).
         public static Bitmap Rotacionar(Bitmap img)
         {
-            Bitmap imgnova = new Bitmap(img.Height, img.Width);
+            Bitmap imagemNova = new Bitmap(img.Height, img.Width);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
                 {
-                    imgnova.SetPixel(j, i, img.GetPixel(i, j));
+                    imagemNova.SetPixel(j, i, img.GetPixel(i, j));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
 
-        // Copia a imagem para dentro de um Bitmap do tamanho de A na posicao
+        // Cola a imagem dentro de um Bitmap do tamanho da cena, na posicao
         // x' = x + tx, y' = y + ty (RA6 p.12). Fundo preto (0,0,0) nao contribui.
-        public static Bitmap SobreCamada(Bitmap img, int coluna, int linha, int tx, int ty)
+        public static Bitmap ColarImagem(Bitmap img, int larguraCena, int alturaCena, int tx, int ty)
         {
-            Bitmap imgnova = new Bitmap(coluna, linha);
+            Bitmap imagemNova = new Bitmap(larguraCena, alturaCena);
             for (int i = 0; i <= img.Width - 1; i++)
             {
                 for (int j = 0; j <= img.Height - 1; j++)
                 {
                     int x = i + tx;
                     int y = j + ty;
-                    if (x >= 0 && x <= coluna - 1 && y >= 0 && y <= linha - 1)
-                        imgnova.SetPixel(x, y, img.GetPixel(i, j));
+                    if (x >= 0 && x <= larguraCena - 1 && y >= 0 && y <= alturaCena - 1)
+                        imagemNova.SetPixel(x, y, img.GetPixel(i, j));
                 }
             }
-            return imgnova;
+            return imagemNova;
         }
     }
 }

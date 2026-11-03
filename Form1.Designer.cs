@@ -9,10 +9,10 @@
 
         private Button btnProcessar;
         private Button btnRotacionar;
-        private PictureBox pictureBox1;
-        private PictureBox pictureBox2;
-        private PictureBox pictureBox3;
-        private PictureBox pictureBox4;
+        private PictureBox picOriginal;
+        private PictureBox picBrilho;
+        private PictureBox picCinza;
+        private PictureBox picRotacao;
 
         /// <summary>
         ///  Clean up any resources.
@@ -37,14 +37,14 @@
         {
             btnProcessar = new Button();
             btnRotacionar = new Button();
-            pictureBox1 = new PictureBox();
-            pictureBox2 = new PictureBox();
-            pictureBox3 = new PictureBox();
-            pictureBox4 = new PictureBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            picOriginal = new PictureBox();
+            picBrilho = new PictureBox();
+            picCinza = new PictureBox();
+            picRotacao = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)picOriginal).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picBrilho).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picCinza).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picRotacao).BeginInit();
             SuspendLayout();
             // 
             // btnProcessar
@@ -67,62 +67,62 @@
             btnRotacionar.UseVisualStyleBackColor = true;
             btnRotacionar.Click += btnRotacionar_Click;
             // 
-            // pictureBox1
+            // picOriginal
             // 
-            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(12, 70);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(300, 225);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 1;
-            pictureBox1.TabStop = false;
+            picOriginal.BorderStyle = BorderStyle.FixedSingle;
+            picOriginal.Location = new Point(12, 70);
+            picOriginal.Name = "picOriginal";
+            picOriginal.Size = new Size(300, 225);
+            picOriginal.SizeMode = PictureBoxSizeMode.Zoom;
+            picOriginal.TabIndex = 1;
+            picOriginal.TabStop = false;
             // 
-            // pictureBox2
+            // picBrilho
             // 
-            pictureBox2.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox2.Location = new Point(330, 70);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(300, 225);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 2;
-            pictureBox2.TabStop = false;
+            picBrilho.BorderStyle = BorderStyle.FixedSingle;
+            picBrilho.Location = new Point(330, 70);
+            picBrilho.Name = "picBrilho";
+            picBrilho.Size = new Size(300, 225);
+            picBrilho.SizeMode = PictureBoxSizeMode.Zoom;
+            picBrilho.TabIndex = 2;
+            picBrilho.TabStop = false;
             // 
-            // pictureBox3
+            // picCinza
             // 
-            pictureBox3.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox3.Location = new Point(648, 70);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(300, 225);
-            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox3.TabIndex = 3;
-            pictureBox3.TabStop = false;
+            picCinza.BorderStyle = BorderStyle.FixedSingle;
+            picCinza.Location = new Point(648, 70);
+            picCinza.Name = "picCinza";
+            picCinza.Size = new Size(300, 225);
+            picCinza.SizeMode = PictureBoxSizeMode.Zoom;
+            picCinza.TabIndex = 3;
+            picCinza.TabStop = false;
             // 
-            // pictureBox4
+            // picRotacao
             // 
-            pictureBox4.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox4.Location = new Point(966, 70);
-            pictureBox4.Name = "pictureBox4";
-            pictureBox4.Size = new Size(300, 225);
-            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox4.TabIndex = 4;
-            pictureBox4.TabStop = false;
+            picRotacao.BorderStyle = BorderStyle.FixedSingle;
+            picRotacao.Location = new Point(966, 70);
+            picRotacao.Name = "picRotacao";
+            picRotacao.Size = new Size(300, 225);
+            picRotacao.SizeMode = PictureBoxSizeMode.Zoom;
+            picRotacao.TabIndex = 4;
+            picRotacao.TabStop = false;
             // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1284, 311);
-            Controls.Add(pictureBox4);
-            Controls.Add(pictureBox3);
-            Controls.Add(pictureBox2);
-            Controls.Add(pictureBox1);
+            Controls.Add(picRotacao);
+            Controls.Add(picCinza);
+            Controls.Add(picBrilho);
+            Controls.Add(picOriginal);
             Controls.Add(btnRotacionar);
             Controls.Add(btnProcessar);
             Name = "Form1";
             Text = "Projeto 4 BIM - Processamento de Imagens";
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picOriginal).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picBrilho).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picCinza).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picRotacao).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
