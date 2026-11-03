@@ -17,7 +17,7 @@ namespace Projeto_4_bim
         string caminhoProcessadaCinza = @"c:\Imagens\ProcessadaCinza.jpg";
         string caminhoProcessadaCinzaRotacionada = @"c:\Imagens\ProcessadaCinzaRotacionada.jpg";
 
-        // Limiares para remover o fundo de cada imagem (ideia do codigo do colega)
+        // Limiares para remover o fundo de cada imagem
         int limiarHomem = 12;
         int limiarBalao = 32;
         int limiarAviao = 45;
@@ -33,38 +33,25 @@ namespace Projeto_4_bim
         // Enunciado item (c): botao unico que realiza todo o processamento.
         public void btnProcessar_Click(object sender, EventArgs e)
         {
-            // Carrega a paisagem e os objetos
-            Bitmap paisagem = new Bitmap(caminhoPaisagem);
-            Bitmap homem = new Bitmap(caminhoHomem);
-            Bitmap balao = new Bitmap(caminhoBalao);
-            Bitmap aviao = new Bitmap(caminhoAviao);
+            // Uma unica primitiva cola as 3 imagens e salva a imagem final
+            ColarImagens(
+                caminhoPaisagem,
+                caminhoHomem, limiarHomem,
+                caminhoBalao, limiarBalao,
+                caminhoAviao, limiarAviao,
+                caminhoProcessada);
 
-            // Cola todos os objetos na MESMA paisagem, gerando uma imagem so com tudo
-            ColarImagem(paisagem, homem, 300, 500, limiarHomem);
-            ColarImagem(paisagem, balao, 500, 0, limiarBalao);
-            ColarImagem(paisagem, aviao, 200, 0, limiarAviao);
+            // Aplica as demais primitivas sobre a imagem final salva
+            ImgGrayLevel(caminhoProcessada, caminhoProcessadaCinza);                  // item (i)
+            Threshold(caminhoProcessadaCinza, caminhoProcessadaBinaria, 126);         // item (j): T = 126
+            Iluminar(caminhoProcessada, caminhoProcessadaBrilho, 85, 85, 85);         // item (h): brilho 85
+            TransporImagem(caminhoProcessadaCinza, caminhoProcessadaCinzaRotacionada); // item (n)
 
-            // Salva a imagem processada final (item k: A+B+C+D=E)
-            paisagem.Save(caminhoProcessada);
-
-            // Aplica as primitivas e salva cada saida
-            Bitmap imagemCinza = ImgGrayLevel(paisagem);
-            imagemCinza.Save(caminhoProcessadaCinza);                 // item (i)
-
-            Bitmap imagemBinaria = Threshold(imagemCinza, 126);
-            imagemBinaria.Save(caminhoProcessadaBinaria);             // item (j): T = 126
-
-            Bitmap imagemBrilho = Iluminar(paisagem, 85, 85, 85);
-            imagemBrilho.Save(caminhoProcessadaBrilho);               // item (h): brilho 85
-
-            Bitmap imagemRotacionada = TransporImagem(imagemCinza);
-            imagemRotacionada.Save(caminhoProcessadaCinzaRotacionada); // item (n)
-
-            // Mostra as 4 imagens na tela
-            picOriginal.Image = new Bitmap(caminhoProcessada);
-            picBrilho.Image = new Bitmap(caminhoProcessadaBrilho);
-            picCinza.Image = new Bitmap(caminhoProcessadaCinza);
-            picRotacao.Image = new Bitmap(caminhoProcessadaCinza);
+            // Mostra as 4 imagens na tela usando .Load
+            picOriginal.Load(caminhoProcessada);
+            picBrilho.Load(caminhoProcessadaBrilho);
+            picCinza.Load(caminhoProcessadaCinza);
+            picRotacao.Load(caminhoProcessadaCinza);
 
             contadorRotacao = 0;
         }
@@ -76,9 +63,9 @@ namespace Projeto_4_bim
             bool mostrarRotacionada = contadorRotacao % 2 == 1;
 
             if (mostrarRotacionada)
-                picRotacao.Image = new Bitmap(caminhoProcessadaCinzaRotacionada);
+                picRotacao.Load(caminhoProcessadaCinzaRotacionada);
             else
-                picRotacao.Image = new Bitmap(caminhoProcessadaCinza);
+                picRotacao.Load(caminhoProcessadaCinza);
         }
 
         // EVIDENCIA (RA7 p.16): cor = Color.FromArgb(r, g, b);
@@ -87,10 +74,92 @@ namespace Projeto_4_bim
             return Color.FromArgb(r, g, b);
         }
 
+        // Verifica se um pixel esta dentro do limiar da cor de fundo.
+        public static bool PixelEhFundo(Color pixel, Color corFundo, int limiar)
+        {
+            return corFundo.R - limiar < pixel.R && corFundo.R + limiar > pixel.R &&
+                   corFundo.G - limiar < pixel.G && corFundo.G + limiar > pixel.G &&
+                   corFundo.B - limiar < pixel.B && corFundo.B + limiar > pixel.B;
+        }
+
+        // UNICA primitiva que cola as 3 imagens na paisagem e salva a imagem final.
+        // Nao recebe Bitmap por parametro; so caminhos.
+        public static void ColarImagens(string caminhoFundo,
+                                        string caminhoHomem, int limiarHomem,
+                                        string caminhoBalao, int limiarBalao,
+                                        string caminhoAviao, int limiarAviao,
+                                        string caminhoSaida)
+        {
+            Bitmap fundo = new Bitmap(caminhoFundo);
+
+            // Cola o homem na posicao (300, 500)
+            using (Bitmap homem = new Bitmap(caminhoHomem))
+            {
+                Color corFundo = homem.GetPixel(0, 0);
+                for (int i = 0; i <= homem.Width - 1; i++)
+                {
+                    for (int j = 0; j <= homem.Height - 1; j++)
+                    {
+                        int x = 300 + i;
+                        int y = 500 + j;
+                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
+                        {
+                            Color pixel = homem.GetPixel(i, j);
+                            if (PixelEhFundo(pixel, corFundo, limiarHomem) == false)
+                                fundo.SetPixel(x, y, pixel);
+                        }
+                    }
+                }
+            }
+
+            // Cola o balao na posicao (500, 0)
+            using (Bitmap balao = new Bitmap(caminhoBalao))
+            {
+                Color corFundo = balao.GetPixel(0, 0);
+                for (int i = 0; i <= balao.Width - 1; i++)
+                {
+                    for (int j = 0; j <= balao.Height - 1; j++)
+                    {
+                        int x = 500 + i;
+                        int y = 0 + j;
+                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
+                        {
+                            Color pixel = balao.GetPixel(i, j);
+                            if (PixelEhFundo(pixel, corFundo, limiarBalao) == false)
+                                fundo.SetPixel(x, y, pixel);
+                        }
+                    }
+                }
+            }
+
+            // Cola o aviao na posicao (200, 0)
+            using (Bitmap aviao = new Bitmap(caminhoAviao))
+            {
+                Color corFundo = aviao.GetPixel(0, 0);
+                for (int i = 0; i <= aviao.Width - 1; i++)
+                {
+                    for (int j = 0; j <= aviao.Height - 1; j++)
+                    {
+                        int x = 200 + i;
+                        int y = 0 + j;
+                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
+                        {
+                            Color pixel = aviao.GetPixel(i, j);
+                            if (PixelEhFundo(pixel, corFundo, limiarAviao) == false)
+                                fundo.SetPixel(x, y, pixel);
+                        }
+                    }
+                }
+            }
+
+            fundo.Save(caminhoSaida);
+        }
+
         // I'(x,y) = I(x,y) + deltaB em cada canal, com clamp min(max(v,0),255).
         // EVIDENCIA (RA7 p.27 e p.29).
-        public static Bitmap Iluminar(Bitmap img, int brilhoR, int brilhoG, int brilhoB)
+        public static void Iluminar(string caminhoEntrada, string caminhoSaida, int brilhoR, int brilhoG, int brilhoB)
         {
+            Bitmap img = new Bitmap(caminhoEntrada);
             Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
@@ -105,12 +174,13 @@ namespace Projeto_4_bim
                         Math.Max(0, Math.Min(255, b + brilhoB))));
                 }
             }
-            return imagemNova;
+            imagemNova.Save(caminhoSaida);
         }
 
         // GrayLevel: g = (r*0.30) + (g*0.59) + (b*0.11) (RA7 p.21).
-        public static Bitmap ImgGrayLevel(Bitmap img)
+        public static void ImgGrayLevel(string caminhoEntrada, string caminhoSaida)
         {
+            Bitmap img = new Bitmap(caminhoEntrada);
             Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
@@ -123,12 +193,13 @@ namespace Projeto_4_bim
                     imagemNova.SetPixel(i, j, CriarCor(cinza, cinza, cinza));
                 }
             }
-            return imagemNova;
+            imagemNova.Save(caminhoSaida);
         }
 
         // Thresholding: se I(i,j) <= T entao 0, senao 255 (RA7 p.23).
-        public static Bitmap Threshold(Bitmap img, int t)
+        public static void Threshold(string caminhoEntrada, string caminhoSaida, int t)
         {
+            Bitmap img = new Bitmap(caminhoEntrada);
             Bitmap imagemNova = new Bitmap(img.Width, img.Height);
             for (int i = 0; i <= img.Width - 1; i++)
             {
@@ -144,47 +215,13 @@ namespace Projeto_4_bim
                         imagemNova.SetPixel(i, j, CriarCor(255, 255, 255));
                 }
             }
-            return imagemNova;
-        }
-
-        // Cola imagemRecorte sobre imagemFundo na posicao (xPosicao, yPosicao),
-        // ignorando pixels cuja cor esteja dentro do limiar da cor de fundo.
-        // Mesmo if/else de comparacao de cor do slide RA7 p.18.
-        public static void ColarImagem(Bitmap imagemFundo, Bitmap imagemRecorte, int xPosicao, int yPosicao, int limiar)
-        {
-            Color corFundo = imagemRecorte.GetPixel(0, 0);
-            int largura = imagemRecorte.Width;
-            int altura = imagemRecorte.Height;
-
-            for (int i = 0; i <= largura - 1; i++)
-            {
-                for (int j = 0; j <= altura - 1; j++)
-                {
-                    int x = xPosicao + i;
-                    int y = yPosicao + j;
-
-                    // Verifica se esta dentro dos limites da imagem de fundo
-                    if (x >= 0 && x <= imagemFundo.Width - 1 && y >= 0 && y <= imagemFundo.Height - 1)
-                    {
-                        int r = imagemRecorte.GetPixel(i, j).R;
-                        int g = imagemRecorte.GetPixel(i, j).G;
-                        int b = imagemRecorte.GetPixel(i, j).B;
-
-                        // Se o pixel NAO for fundo, cola ele no fundo
-                        if ((corFundo.R - limiar < r && corFundo.R + limiar > r &&
-                             corFundo.G - limiar < g && corFundo.G + limiar > g &&
-                             corFundo.B - limiar < b && corFundo.B + limiar > b) == false)
-                        {
-                            imagemFundo.SetPixel(x, y, CriarCor(r, g, b));
-                        }
-                    }
-                }
-            }
+            imagemNova.Save(caminhoSaida);
         }
 
         // Rotacao por transposicao de matriz: I'(x,y) = I(y,x) (RA6 p.20).
-        public static Bitmap TransporImagem(Bitmap img)
+        public static void TransporImagem(string caminhoEntrada, string caminhoSaida)
         {
+            Bitmap img = new Bitmap(caminhoEntrada);
             Bitmap imagemNova = new Bitmap(img.Height, img.Width);
             for (int i = 0; i <= img.Width - 1; i++)
             {
@@ -193,7 +230,7 @@ namespace Projeto_4_bim
                     imagemNova.SetPixel(j, i, img.GetPixel(i, j));
                 }
             }
-            return imagemNova;
+            imagemNova.Save(caminhoSaida);
         }
     }
 }
