@@ -79,59 +79,53 @@ namespace Projeto_4_bim
         {
             Bitmap fundo = new Bitmap(caminhoFundo);
 
-            using (Bitmap homem = new Bitmap(caminhoHomem))
+            Bitmap homem = new Bitmap(caminhoHomem);
+            Color corFundo = homem.GetPixel(0, 0);
+            for (int i = 0; i <= homem.Width - 1; i++)
             {
-                Color corFundo = homem.GetPixel(0, 0);
-                for (int i = 0; i <= homem.Width - 1; i++)
+                for (int j = 0; j <= homem.Height - 1; j++)
                 {
-                    for (int j = 0; j <= homem.Height - 1; j++)
+                    int x = 300 + i;
+                    int y = 500 + j;
+                    if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
                     {
-                        int x = 300 + i;
-                        int y = 500 + j;
-                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
-                        {
-                            Color pixel = homem.GetPixel(i, j);
-                            if (PixelEhFundo(pixel, corFundo, limiarHomem) == false)
-                                fundo.SetPixel(x, y, pixel);
-                        }
+                        Color pixel = homem.GetPixel(i, j);
+                        if (PixelEhFundo(pixel, corFundo, limiarHomem) == false)
+                            fundo.SetPixel(x, y, pixel);
                     }
                 }
             }
 
-            using (Bitmap balao = new Bitmap(caminhoBalao))
+            Bitmap balao = new Bitmap(caminhoBalao);
+            corFundo = balao.GetPixel(0, 0);
+            for (int i = 0; i <= balao.Width - 1; i++)
             {
-                Color corFundo = balao.GetPixel(0, 0);
-                for (int i = 0; i <= balao.Width - 1; i++)
+                for (int j = 0; j <= balao.Height - 1; j++)
                 {
-                    for (int j = 0; j <= balao.Height - 1; j++)
+                    int x = 500 + i;
+                    int y = 0 + j;
+                    if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
                     {
-                        int x = 500 + i;
-                        int y = 0 + j;
-                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
-                        {
-                            Color pixel = balao.GetPixel(i, j);
-                            if (PixelEhFundo(pixel, corFundo, limiarBalao) == false)
-                                fundo.SetPixel(x, y, pixel);
-                        }
+                        Color pixel = balao.GetPixel(i, j);
+                        if (PixelEhFundo(pixel, corFundo, limiarBalao) == false)
+                            fundo.SetPixel(x, y, pixel);
                     }
                 }
             }
 
-            using (Bitmap aviao = new Bitmap(caminhoAviao))
+            Bitmap aviao = new Bitmap(caminhoAviao);
+            corFundo = aviao.GetPixel(0, 0);
+            for (int i = 0; i <= aviao.Width - 1; i++)
             {
-                Color corFundo = aviao.GetPixel(0, 0);
-                for (int i = 0; i <= aviao.Width - 1; i++)
+                for (int j = 0; j <= aviao.Height - 1; j++)
                 {
-                    for (int j = 0; j <= aviao.Height - 1; j++)
+                    int x = 200 + i;
+                    int y = 0 + j;
+                    if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
                     {
-                        int x = 200 + i;
-                        int y = 0 + j;
-                        if (x <= fundo.Width - 1 && y <= fundo.Height - 1)
-                        {
-                            Color pixel = aviao.GetPixel(i, j);
-                            if (PixelEhFundo(pixel, corFundo, limiarAviao) == false)
-                                fundo.SetPixel(x, y, pixel);
-                        }
+                        Color pixel = aviao.GetPixel(i, j);
+                        if (PixelEhFundo(pixel, corFundo, limiarAviao) == false)
+                            fundo.SetPixel(x, y, pixel);
                     }
                 }
             }
